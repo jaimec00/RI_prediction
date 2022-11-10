@@ -1,0 +1,36 @@
+take the refractive index of known protein within family(or clade or whatever makes sense, or take average of known)
+whatever section you choose, get all of the sequences and calculate a consensus sequence and 
+
+does consensus sequence lign up with acerage RI of known
+
+does consensus lign up wuth average of all predicted
+
+do this on small set of crystallins
+
+overfit the data
+if the sequences do not lign up with the average of known RIs, find a weight to mulitply to make them lign up
+
+
+blast query sequence
+get all known refractive index, find average
+	or
+	get consensus and calculate ri from that (maybe weigh each amino acids entropy)
+	
+the higher the entropu, the more likely that that amino acid will contribute more heavily to ri
+
+want to find correlation to consensus predicetd ri, average predicted ri, average experimental ri, entropy
+
+
+Lysozyme, G. gallus, 0.1963, 0.1970 ± 0.0010, 0.189, 2.64
+γS, H. sapiens, 0.1985, 0.2073 ± 0.0014, 2.38, 1.94
+BS, C. intestinalis ,0.1917 ,0.1985 ± 0.0012 ,1.84 ,1.54
+γM8b ,D. mawsoni ,0.2003 ,0.2158 ± 0.0015 ,4.19 ,1.06
+γM8c ,D. mawsoni ,0.2003 ,0.2061 ± 0.0014 ,1.57 ,0.957
+γM8d ,D. mawsoni ,0.1995 ,0.2041 ± 0.0014 ,1.24 ,1.03
+γS1 ,D. mawsoni, 0.2020 ,0.2183 ± 0.0014 ,4.41 ,2.15
+γS2 ,D. mawsoni ,0.2002 ,0.2168 ± 0.0014 ,4.49 ,2.31
+J2, T. cystophora ,0.1920 ,0.2037 ± 0.0012 ,3.16 ,0.283
+
+
+
+
