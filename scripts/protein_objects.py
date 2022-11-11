@@ -53,13 +53,15 @@ class Amino_Acid:
             # y_avg = sum([atom.y*atom.weight for atom in atoms if atom.name not in backbone and "H" not in atom.name]) / sum([atom.weight for atom in atoms if atom not in backbone and "H" not in atom.name]) # len([atom for atom in atoms if atom.name not in backbone and "H" not in atom.name])
             # z_avg = sum([atom.z*atom.weight for atom in atoms if atom.name not in backbone and "H" not in atom.name]) / sum([atom.weight for atom in atoms if atom not in backbone and "H" not in atom.name]) # len([atom for atom in atoms if atom.name not in backbone and "H" not in atom.name])
 
-            # Average position
+            # Average x, y, z positions of heavy atoms past backbone in amino acid
             x_avg = sum([atom.x for atom in atoms if atom.name not in backbone and "H" not in atom.name]) / len([atom for atom in atoms if atom.name not in backbone and "H" not in atom.name])
             y_avg = sum([atom.y for atom in atoms if atom.name not in backbone and "H" not in atom.name]) / len([atom for atom in atoms if atom.name not in backbone and "H" not in atom.name])
             z_avg = sum([atom.z for atom in atoms if atom.name not in backbone and "H" not in atom.name]) / len([atom for atom in atoms if atom.name not in backbone and "H" not in atom.name])
 
+            # Calculate the average distance of atoms from the center to get radius
             all_dists = [((atom.x - x_avg)**2 + (atom.y - y_avg)**2 + (atom.z - z_avg)**2)**(1/2) for atom in atoms if atom.name not in backbone and "H" not in atom.name]
             radius = sum(all_dists) / len(all_dists)
+
             self.centroid = Atom("CEN", x_avg, y_avg, z_avg, radius)
 
         self.pos = pos
@@ -96,19 +98,26 @@ class Protein:
         return dn_dc
 
     def get_cf(self):
+        # define polar amino acids
         polar_aa = [aa for aa in self.sequence if aa.name in ["HIS","PHE","TRY","TYR","ARG"]]
         cf = 0
         
+        # iterate through each pair of polar amino acids
         for idx, polar_i in enumerate(polar_aa):
             for polar_j in polar_aa[idx+1:]:
         
-                dist = (((polar_i.centroid.x-polar_j.centroid.x)**2 + (polar_i.centroid.y-polar_j.centroid.y)**2 + (polar_i.centroid.z-polar_j.centroid.z)**2)**(1/2)) - (polar_i.centroid.radius+polar_j.centroid.radius)
+                # calculate the distance between polar centroid i and polar centroid j
+                dist = (((polar_i.centroid.x-polar_j.centroid.x)**2 + (polar_i.centroid.y-polar_j.centroid.y)**2 + (polar_i.centroid.z-polar_j.centroid.z)**2)**(1/2)) #- (polar_i.centroid.radius+polar_j.centroid.radius)
 
+                # If the distance is less than the cutoff for the polar centroid, continue (ARG = 6 Angstroms, Others = 7 Angstroms) 
                 if polar_i.cutoff > dist or polar_i.cutoff > dist:
+                    # assign delta depending on if pi-pi or pi-cation interaction
                     if polar_i.name == "ARG" or polar_j.name == "ARG":
                         delta = -0.08
                     else:
                         delta = 0.11
-                    cf += ((polar_i.dn_dc) * (polar_j.dn_dc))  / dist**(3)
+                    
+                    # calculate correction factor based on each residue's dn/dc difference from alanine
+                    cf += ((polar_i.dn_dc - aa_info.loc["ALA", "dn/dc"]) * (polar_j.dn_dc - aa_info.loc["ALA", "dn/dc"])) * delta / dist**(3)
 
         return cf
