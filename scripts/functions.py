@@ -67,26 +67,27 @@ def get_dndc_predictions(pdb_list, path):
         
     return dn_dc_list
     
-def graph(values):
+def graph(values, names):
     
-    colors = ["red","blue","green", "orange"]
+    colors = ["black", "red","blue","green", "orange"]
     true  = values["Experimental dn/dc"]
-    del values["Experimental dn/dc"]
 
     for color, prediction in enumerate(values.keys()):
         
         slope, intercept = np.polyfit(true, values[prediction], 1)
         correlation = np.corrcoef(true, values[prediction])
 
-        plt.scatter(true, values[prediction], c=colors[color])
-        plt.plot(true, slope*np.array(true) + intercept, c=colors[color], label=f"{prediction} | R: {round(correlation[1][0], 3)}")
-    
-        plt.legend(loc="upper left")
+        plt.scatter(true, values[prediction], c=colors[color], linewidths=0.25, alpha=0.75)
+        plt.plot(true, slope*np.array(true) + intercept, c=colors[color], linewidth=0.75,label=f"{prediction} | R: {round(correlation[1][0], 2)}", alpha=0.75)
     
     plt.ylabel("Predicted dn/dc")
     plt.xlabel("Experimental dn/dc")
         
-    plt.plot([0,2], [0,2], c="black")
-    plt.axis([0.191, 0.22, 0.191, 0.22])
+    # plt.plot([0,2], [0,2], c="black", label = "Experimental dn/dc")
+    for name, point in enumerate(true):
+        plt.text(x=point - 0.0005, y=point+ 0.0005, s=names[name], fontsize=7.5)
+
+    plt.axis([0.197, 0.22, 0.19, 0.22])
+    plt.legend(loc="upper left", fontsize="x-small")
 
     plt.show()
