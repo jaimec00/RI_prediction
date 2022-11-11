@@ -16,8 +16,9 @@ def main():
                 "Rosetta Centroid Prediction": get_dndc_predictions(rosetta_pdb_list, rosetta_path), 
                 "Manual Centroid Prediction": get_dndc_predictions(manual_pdb_list, pdb_path)}
 
-    print(values["Experimental dn/dc"])
-    graph(values)
+    names = protein_info.sort_values(by="pdb file").index.values
+
+    graph(values, names)
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 # INFO 
